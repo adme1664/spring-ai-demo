@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: spring-ai-demo
+  ai:
+    openai:
+      base-url: https://api.openai.com
+      chat:
+        options:
+          model: gpt-4o
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: ai_event
+          group: open_ai_event
+        output:
+          destination: ai_event
+          group: anthropic_event
+      function:
+        bindings:
+          messageConsumer-in-0: input
+          messageSupplier-out-0: output
+      rabbit:
+        bindings:
+          input.consumer:
+            binding-routing-key: "open.ai.conversation.#"
+            binding-routing-key-delimiter: ","
+          output.producer:
+            routing-key-expression: headers.type
+    function:
+      definition: messageConsumer;messageSupplier
+
+
+
+
+
+
+
